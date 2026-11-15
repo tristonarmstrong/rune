@@ -613,6 +613,9 @@ impl Gpu {
         let mut descriptor = wgpu::InstanceDescriptor::new_without_display_handle();
         descriptor.backends = backends;
         descriptor.flags.remove(wgpu::InstanceFlags::VALIDATION_INDIRECT_CALL);
+        // Asahi's Vulkan driver reports no conformance version, so wgpu hides it unless the
+        // instance allows nonconformant adapters. Apple silicon Linux has no other GPU driver.
+        descriptor.flags |= wgpu::InstanceFlags::ALLOW_UNDERLYING_NONCOMPLIANT_ADAPTER;
         // An HWND's DXGI swapchain is opaque only; DirectComposition composites alpha on every GPU.
         descriptor.backend_options.dx12.presentation_system = wgpu::Dx12SwapchainKind::DxgiFromVisual;
         // A window waits for room in its swap chain itself, in the loop rather than in
